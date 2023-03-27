@@ -25,13 +25,14 @@ const thoughtSchema = new Schema(
       getters: true,
       virtuals: true,
     },
+    id: false,
   }
 );
 
 thoughtSchema.virtual('reactionCount').get(function () {
-  return this.reactions.length;
+  return (this.reactions && this.reactions.length) ? this.reactions.length : 0
 });
 
-const Thought = model('thought', thoughtSchema);
+const Thought = model('thoughts', thoughtSchema);
 
 module.exports = Thought;

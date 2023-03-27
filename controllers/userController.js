@@ -51,5 +51,5 @@ module.exports = {
           : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
-  },
+  },  
 };

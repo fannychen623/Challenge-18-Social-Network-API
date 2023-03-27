@@ -376,29 +376,45 @@ const possibleReactions = [
 'Now I\'m confused.',
 ];
 
-const users = [];
-
 // Get a random item given an array
 const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const getRandomNumber = Math.floor(Math.random() * 5);
 
 // Gets a random full name
 const getRandomName = () =>
   `${getRandomArrItem(usernames)}`;
 
+const getRandomUsers = (int) => {
+  let results = [];
+  for (let i = 0; i < int; i++) {
+    const username = getRandomName();
+    const email = username + '@email.com';
+
+    if (!results.includes(username)) {
+      results.push({
+        username,
+        email,
+      });
+    };
+  }
+  return results;
+};
+
 // Function to generate random thoughts that we can add to the database. Includes thought reactions.
-const getRandomThoughts = (int) => {
+const getRandomThoughts = (usersList, userIds, int) => {
   let results = [];
   for (let i = 0; i < int; i++) {
     results.push({
       thoughtText: getRandomArrItem(thoughtBodies),
-      reactions: [...getThoughtReactions(3)],
+      username: getRandomArrItem(userIds),
+      reactions: [...getThoughtReactions(usersList, getRandomNumber)],
     });
   }
   return results;
 };
 
 // Create the reactions that will be added to each thought
-const getThoughtReactions = (int) => {
+const getThoughtReactions = (usersList, int) => {
   if (int === 1) {
     return getRandomArrItem(possibleReactions);
   }
@@ -406,11 +422,24 @@ const getThoughtReactions = (int) => {
   for (let i = 0; i < int; i++) {
     results.push({
       responseBody: getRandomArrItem(possibleReactions),
-      username: getRandomName(),
+      username: getRandomArrItem(usersList),
+    });
+  }
+  return results;
+};
+
+const getFriends = (userIds, int) => {
+  if (int === 1) {
+    return getRandomArrItem(userIds);
+  }
+  let results = [];
+  for (let i = 0; i < int; i++) {
+    results.push({
+      username: getRandomArrItem(userIds),
     });
   }
   return results;
 };
 
 // Export the functions for use in seed.js
-module.exports = { getRandomName, getRandomThoughts };
+module.exports = { getRandomUsers, getRandomThoughts, getFriends };
