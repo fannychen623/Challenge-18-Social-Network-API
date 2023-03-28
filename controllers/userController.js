@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
-const singleThought = async (userId) =>
+const getThoughts = async (userId) =>
   User.aggregate([
     // only include the given student by using $match
     { $match: { _id: ObjectId(userId) } },
@@ -9,6 +9,15 @@ const singleThought = async (userId) =>
     { $unwind: "$thoughts" },
     { $replaceRoot: { newRoot: "$thoughts" } },
     { $project: { "_id": 1, "username": 0, "email": 0, "__v": 0,  "friends": 0, } }
+  ]);
+const getFriends = async (userId) =>
+  User.aggregate([
+    // only include the given student by using $match
+    { $match: { _id: ObjectId(userId) } },
+    { $lookup: { from: "users", localField: "friends", foreignField: "_id", as: "friends" } },
+    { $unwind: "$friends" },
+    { $replaceRoot: { newRoot: "$friends" } },
+    { $project: { "friends": 1 } }
   ]);
 
 module.exports = {
@@ -28,7 +37,8 @@ module.exports = {
           ? res.status(404).json({ message: 'No user with that ID' })
           : res.json({
             user,
-            thoughts: await singleThought(req.params.userId) 
+            thoughts: await getThoughts(req.params.userId),
+            friends: await getFriends(req.params.userId),
           })
       )
       .catch((err) => res.status(500).json(err));
@@ -67,4 +77,37 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },  
+
+  // Add a friend to a user
+  addFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.body } },
+      { runValidators: true, new: true }
+    )
+      .then((user) =>
+        !user
+          ? res
+              .status(404)
+              .json({ message: 'No user found with that ID :(' })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+  // Remove friend from a user
+  removeFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } },
+      { runValidators: true, new: true }
+    )
+      .then((user) =>
+        !user
+          ? res
+              .status(404)
+              .json({ message: 'No user found with that ID :(' })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
 };
