@@ -379,6 +379,9 @@ const possibleReactions = [
 // Get a random item given an array
 const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const getRandomNumber = Math.floor(Math.random() * 5);
+const time = new Date().toLocaleTimeString()
+const date = new Date().toDateString()
+const createdAt = date + ' at ' + time;
 
 // Gets a random full name
 const getRandomName = () =>
@@ -407,6 +410,7 @@ const getRandomThoughts = (usersList, userIds, int) => {
     results.push({
       thoughtText: getRandomArrItem(thoughtBodies),
       username: getRandomArrItem(userIds),
+      createdAt: createdAt,
       reactions: [...getThoughtReactions(usersList, getRandomNumber)],
     });
   }

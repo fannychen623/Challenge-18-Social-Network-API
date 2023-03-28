@@ -1,20 +1,35 @@
+const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
+
+const singleThought = async (userId) =>
+  User.aggregate([
+    // only include the given student by using $match
+    { $match: { _id: ObjectId(userId) } },
+    { $lookup: { from: "thoughts", localField: "thoughts", foreignField: "_id", as: "thoughts" } },
+    { $unwind: "$thoughts" },
+    { $replaceRoot: { newRoot: "$thoughts" } },
+    { $project: { "_id": 1, "username": 0, "email": 0, "__v": 0,  "friends": 0, } }
+  ]);
 
 module.exports = {
   // Get all users
   getUsers(req, res) {
     User.find()
+      .select( { '__v': 0, } )
       .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
   // Get a user
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      .select('-__v')
-      .then((user) =>
+      .select( { '__v': 0, 'thoughts': 0, 'friends': 0 } )
+      .then(async (user) =>
         !user
           ? res.status(404).json({ message: 'No user with that ID' })
-          : res.json(user)
+          : res.json({
+            user,
+            thoughts: await singleThought(req.params.userId) 
+          })
       )
       .catch((err) => res.status(500).json(err));
   },

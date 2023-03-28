@@ -18,7 +18,7 @@ connection.once('open', async () => {
 
   const thoughts = getRandomThoughts(usersList, userIds, 10);
 
-  await Thought.collection.insertMany(thoughts);
+  await Thought.collection.insertMany(thoughts)
 
   const thoughtsArray = [];
   for await (const doc of Thought.find()) {
@@ -35,7 +35,7 @@ connection.once('open', async () => {
     doc.friends = friendsArray;
     let userThoughts = [];
     for (let i = 0; i < thoughtsArray.length; i++) {
-      if (thoughtsArray[i].userId == doc.id.toString()) {
+      if (thoughtsArray[i].userId == doc._id.toString()) {
         userThoughts.push(thoughtsArray[i].thoughtId);
       };
     };
