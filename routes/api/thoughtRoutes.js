@@ -1,3 +1,4 @@
+// import package and controller modules
 const router = require('express').Router();
 const {
   getThoughts,
@@ -9,6 +10,7 @@ const {
   removeReaction,
 } = require('../../controllers/thoughtController');
 
+// define http request paths
 // /api/thoughts
 router.route('/').get(getThoughts).post(createThought);
 

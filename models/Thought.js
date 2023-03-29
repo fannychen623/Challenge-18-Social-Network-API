@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
 
-// Schema to create Student model
+// Schema to create thought model
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -29,6 +29,7 @@ const thoughtSchema = new Schema(
   }
 );
 
+// virtual to count total reactions for thought
 thoughtSchema.virtual('reactionCount').get(function () {
   return (this.reactions && this.reactions.length) ? this.reactions.length : 0
 });

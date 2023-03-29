@@ -1,3 +1,4 @@
+// Seed arrays
 const usernames = [
 'hisngdaeueobtaff', 
 'dpeocerpxele', 
@@ -378,18 +379,22 @@ const possibleReactions = [
 
 // Get a random item given an array
 const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+// Get a random number
 const getRandomNumber = Math.floor(Math.random() * 5);
+// Format current date for createdAt data
 const time = new Date().toLocaleTimeString()
 const date = new Date().toDateString()
 const createdAt = date + ' at ' + time;
 
-// Gets a random full name
+// Gets a random username
 const getRandomName = () =>
   `${getRandomArrItem(usernames)}`;
 
+// Create array of random users
 const getRandomUsers = (int) => {
   let results = [];
   for (let i = 0; i < int; i++) {
+    // include username and email
     const username = getRandomName();
     const email = username + '@email.com';
 
@@ -403,7 +408,7 @@ const getRandomUsers = (int) => {
   return results;
 };
 
-// Function to generate random thoughts that we can add to the database. Includes thought reactions.
+// Generate random thoughts
 const getRandomThoughts = (usersList, userIds, int) => {
   let results = [];
   for (let i = 0; i < int; i++) {
@@ -411,13 +416,14 @@ const getRandomThoughts = (usersList, userIds, int) => {
       thoughtText: getRandomArrItem(thoughtBodies),
       username: getRandomArrItem(userIds),
       createdAt: createdAt,
+      // include reactions
       reactions: [...getThoughtReactions(usersList, getRandomNumber)],
     });
   }
   return results;
 };
 
-// Create the reactions that will be added to each thought
+// Get reactions that will be added to each thought
 const getThoughtReactions = (usersList, int) => {
   if (int === 1) {
     return getRandomArrItem(possibleReactions);
@@ -432,6 +438,7 @@ const getThoughtReactions = (usersList, int) => {
   return results;
 };
 
+// Get friends that will be added to each user
 const getFriends = (userIds, int) => {
   if (int === 1) {
     return getRandomArrItem(userIds);

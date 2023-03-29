@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
+// Combine the thoughts to users
 const getThoughts = async (userId) =>
   User.aggregate([
     // only include the given student by using $match
@@ -10,6 +11,8 @@ const getThoughts = async (userId) =>
     { $replaceRoot: { newRoot: "$thoughts" } },
     { $project: { "_id": 1, "username": 0, "email": 0, "__v": 0,  "friends": 0, } }
   ]);
+  
+// Combine the friends to users
 const getFriends = async (userId) =>
   User.aggregate([
     // only include the given student by using $match
@@ -28,7 +31,8 @@ module.exports = {
       .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
-  // Get a user
+
+  // Get a single user
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .select( { '__v': 0, 'thoughts': 0, 'friends': 0 } )
@@ -43,6 +47,7 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },
+
   // Create a user
   createUser(req, res) {
     User.create(req.body)
@@ -52,6 +57,7 @@ module.exports = {
         return res.status(500).json(err);
       });
   },
+
   // Delete a user
   deleteUser(req, res) {
     User.findOneAndDelete({ _id: req.params.userId })
@@ -63,6 +69,7 @@ module.exports = {
       .then(() => res.json({ message: 'User and thoughts deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
+
   // Update a user
   updateUser(req, res) {
     User.findOneAndUpdate(
