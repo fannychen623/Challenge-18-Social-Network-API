@@ -98,8 +98,8 @@ THEN I am able to successfully create and delete reactions to thoughts and add a
 
 ## **APPLICATION SAMPLE RUNS**
 ### User Requests
->![User](./assets/ "User")
+>![User](./assets/userCRUD.png "User")
 >
 ### Thought Requests
->![Thought](./assets/ "Thought")
+>![Thought](./assets/thoughtCRUD.png "Thought")
 >
